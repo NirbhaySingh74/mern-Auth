@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import route from "./routes/user.route.js";
 
 const app = express();
 
@@ -16,3 +17,5 @@ mongoose
     });
   })
   .catch((err) => console.log("mongodb connection error", err));
+
+app.use("/api/user", route);
