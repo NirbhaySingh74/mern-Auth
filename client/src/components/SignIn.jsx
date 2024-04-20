@@ -2,16 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
-
+import { signInStart, signInFailure, signInSuccess } from "../utils/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 const SignIn = () => {
   const users = {
     email: "",
     password: "",
   };
   const [user, setUser] = useState(users);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const inputHandler = (e) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({
@@ -23,22 +24,21 @@ const SignIn = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      setError(false);
+      dispatch(signInStart());
       const res = await axios.post("/api/auth/signin", user);
       toast.success("User signed up successfully", { position: "top-right" });
 
       console.log(res.data);
       setUser(users);
-      setLoading(false);
+      // console.log(error);
       if (res.data.success === false) {
-        setError(true);
+        dispatch(signInFailure(res.data));
         return;
       }
+      dispatch(signInSuccess(res.data));
       navigate("/");
     } catch (error) {
-      setLoading(false);
-      setError(true);
+      dispatch(signInFailure(error));
     }
   };
 
@@ -75,7 +75,9 @@ const SignIn = () => {
           <span className="text-blue-500">Sign Up</span>
         </Link>
       </div>
-      <p className="text-red-700 mt-5">{error && "Something went wrong!"}</p>
+      <p className="text-red-700 mt-5">
+        {error ? error.response?.data?.message || "Something went wrong!" : ""}
+      </p>
     </div>
   );
 };
