@@ -1,6 +1,7 @@
 import { User } from "../model/user.model.js";
 import bcryptjs from "bcryptjs";
-export const signup = async (req, res) => {
+import { errorHandler } from "../utils/error.js";
+export const signup = async (req, res, next) => {
   if (!req.body) return res.status(404).json({ message: "filled is required" });
   try {
     const { username, email, password } = req.body;
@@ -10,6 +11,7 @@ export const signup = async (req, res) => {
     console.log(newUser);
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(500).json(error.message);
+    //custom error -  next(errorHandler(300, "something went wrong"));
+    next(error);
   }
 };
