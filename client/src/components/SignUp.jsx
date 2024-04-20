@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -12,6 +12,7 @@ const SignUp = () => {
   const [user, setUser] = useState(users);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const inputHandler = (e) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({
@@ -27,14 +28,15 @@ const SignUp = () => {
       setError(false);
       const res = await axios.post("/api/auth/signup/", user);
       toast.success("User signed up successfully", { position: "top-right" });
-      const data = await res.json();
-      console.log(data);
+
+      console.log(res.data);
       setUser(users);
       setLoading(false);
-      if (data.success === false) {
+      if (res.data.success === false) {
         setError(true);
         return;
       }
+      navigate("/sign-in");
     } catch (error) {
       setLoading(false);
       setError(true);
