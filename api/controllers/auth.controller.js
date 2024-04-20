@@ -2,6 +2,7 @@ import { User } from "../model/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 export const signup = async (req, res, next) => {
+  // console.log(req.body);
   if (!req.body) return res.status(404).json({ message: "filled is required" });
   try {
     const { username, email, password } = req.body;
